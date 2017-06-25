@@ -1,0 +1,80 @@
+#+TITLE: Usage Instructions for Micro-CT Plant Images
+#+AUTHOR: Nathan Hughes ([[mailto:nah31@aber.ac.uk][nah31@aber.ac.uk]])
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LaTeX_HEADER: \usepackage[margin=0.8in]{geometry}
+#+LaTeX_HEADER: \usepackage{amssymb,amsmath}
+#+LaTeX_HEADER: \usepackage{fancyhdr} %For headers and footers
+#+LaTeX_HEADER: \pagestyle{fancy} %For headers and footers
+#+LaTeX_HEADER: \usepackage{lastpage} %For getting page x of y
+#+LaTeX_HEADER: \usepackage{float} %Allows the figures to be positioned and formatted nicely
+#+LaTeX_HEADER: \floatstyle{boxed} %using this
+#+LaTeX_HEADER: \restylefloat{figure} %and this command
+#+LaTeX_HEADER: \usepackage{url} %Formatting of urls
+#+LaTeX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \setminted{frame=single,framesep=10pt}
+#+LaTeX_HEADER: \chead{}
+#+LaTeX_HEADER: \rhead{\today}
+#+LaTeX_HEADER: \cfoot{}
+#+LaTeX_HEADER: \rfoot{\thepage\ of \pageref{LastPage}}
+#+LATEX: \clearpage
+
+
+* Usage
+Usage of this software is straightforward. Inputting a directory, a voxel size and a minimum size of expected grain objects will output and write grain statistics and image to file.
+
+** Setup variables 
+A brief setup of environment variables are required, this is an example:
+#+begin_src octave
+voxelSize = 68.8; % or whatever micro-meter to voxel ratio was used in scanning
+minimumGrainSize = 10000; % a minimum grain size of interest
+
+% Every folder in CT-Scans folder and every ISQ file in them
+directory = '/home/files/CT-Scans/*/*.ISQ'; 
+#+end_src 
+
+** Running 
+Running the program is as simple as calling the processDirectory function.
+#+begin_src octave
+% Will process all files found by rdir function
+processDirectory(directory, voxelSize, minimumGrainSize);
+#+end_src 
+
+* Files and Functions
+
+** cleanWheat
+cleanWheat is a function which takes as input a filename location on disk of an ISQ raw image, it processes it and outputs a binary 3D image and a greyscale 3D image which has been cleaned and segmented.
+** countGrain
+countGrain takes cleaned image data, separates each identified grain and computes statistics on a grain-per-grain basis. It returns two statistics objects, one with raw pixel data counted and another with computed metric values.
+** filterSmallObjects
+filterSmallObjects attempts to remove all objects which are smaller than the specified parameter during setup. This uses pixel size *not* metric sizes for this.  
+** imSurface
+imSurface is a library originally by David Legland. It measures the surface area in pixels of a 3D object. 
+** processDirectory
+processDirectory is the main controlling function of this software, it moves image data around from function to function, gathers image results/measurements and saves it to disk from here.
+** rdir
+rdir is a function which recursively finds files, it is used to find files in sub-directories by using the '*' wildcard in the directory name parameter. 
+** readISQ
+readISQ originally developed by Johan Karlsson, we have modified it to make speed increases and added specific slice loading, this helps for increased speed when processing larger images
+** segmentRachis
+segmentRachis finds locations of nodes along the rachis of spikes of wheat, oats etc. Use of this data is primarily for locating joining points of split scans.
+** watershed3D
+watershed3D incorporates traditional watershedding techniques and has adapted them to work in 3D. It also makes use of modernised distance-based watershed methods, by way of chessboard distance technique. 
+** writeTif
+writeTif writes image stacks to disk as TIF formatted files.
+
+
+* Output
+From successful running of this software output will be: 
+- A statistics of grains CSV with metric values
+- A statistics of grains CSV with raw values
+- A TIF file of the segmented image 
+- A statistics file of the rachis top and bottom points.
+- A folder of 2D cross sectional images, for each grain
+- A folder of 3D TIF files, each a individual grain
+
+The output folder should look similar to this: 
+
+#+BEGIN_center
+[[./directory.png]]
+#+END_center
