@@ -1,44 +1,32 @@
-function processDirectory(dirpath, voxelSize, minGrainSize)
-% given a directory will scan for ISQ files and process
-% e.g.'dirpath/*/*.ISQ'
+function processDirectory(dirpath)
+% Given a directory will scan for ISQ files and process
 
-% grab all the files to process
+% Grab all the files to process
+%files = rdir('~/ISQ/76/*/*.ISQ');
+% '/media/phenomics/storage/CT-Scans/00000076/512x512/*/*.ISQ'
 files = rdir(dirpath);
 
+tic
 for file=1:size(files, 1)
     
-    % get filename
+    file
     filename = files(file).name;
-    % segment image initially in 2D  
     [img, masked] = cleanWheat(files(file).name);
-    % perform 3D watershedding to segment any leftover data
-    img = watershedSplit3D(img);
+    %img = watershedSplit3D(img);
     
     % count objects
-    [img, ~] = filterSmallObjs(img, minGrainSize);
+    [img, ~] = filterSmallObjs(img);
     
-    % count Rachis
-    [rachis, top, bottom] = segmentRachis(masked); 
-    
-    % compute rachis stats for use when rejoining spikes
-    rstats.top = top; 
-    rstats.bottom = bottom; 
-    % write rachis data to file
-    writetable((struct2table(rstats)), strcat(filename,'-rstats.csv'));
-    
-    % perform grain measurement gathering!
-    [stats, rawstats] = countGrain(img, files(file).name, masked, voxelSize, minGrainSize);
+    % can comment this out if you just want clean images to process other
+    % places 
+    stats = countGrain(img, files(file).name, masked);
     
     % write stats file
     file_output_stats = strcat(filename, '.csv');
-    file_output_rawstats = strcat(filename, '-raw_stats.csv');
-    % clear previous stat files if they exist
     delete (file_output_stats);
-    delete (file_output_rawstats);
     writetable(struct2table(stats), file_output_stats);
-    writetable(struct2table(rawstats), file_output_rawstats);
     
-    % Write segmented image to file
+    % Write segmented file to inspect
     file_output_img = strcat(filename, 'cleaned.tif');
     delete (file_output_img);
     for K=1:length(masked(1, 1, :))
@@ -46,4 +34,5 @@ for file=1:size(files, 1)
     end
     
 end
+toc
 end

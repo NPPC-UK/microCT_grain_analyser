@@ -52,11 +52,6 @@ if nargin<4
     progress=0;
 end
 
-%image=zeros(window(2)-window(1)+1,window(4)-window(3)+1,last_slice-first_slice+1);
-if progress 
-    wb=waitbar(0,'Loading image data');
-end
-
 %preallocation
 image = zeros(metadata.dimx_p, metadata.dimy_p,last_slice);
 
@@ -70,12 +65,13 @@ for slice=first_slice:last_slice
 end
 
 
-imageMin = min(image(:)); % or imageMin = min(min(image));
-imageMax = max(image(:)); % or imageMax = max(max(image));
-image = uint8(255 * ((image - imageMin) / (imageMax - imageMin)));
+% imageMin = min(image(:)); % or imageMin = min(min(image));
+% imageMax = max(image(:)); % or imageMax = max(max(image));
+% image = uint8(255 * ((image - imageMin) / (imageMax - imageMin)));
 
 % convert to grayscale that's usable
-%image = uint8(image(:,:,:)/max(image(:))*255);
+image = uint8(image(:,:,:)/max(image(:))*255);
+
 
 
 

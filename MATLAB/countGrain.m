@@ -1,27 +1,26 @@
-function [ grain_stats, rawstats ] = countGrain( img, imagename, immask , conv, minGrainSize)
-% countGrain takes an image, name,masked image conv size and minimum grain size, returns grain stats
-% grain_stats gives metric measurements and rawstats pixel value measurements
+function [ grain_stats ] = countGrain( img, imagename, immask )
 
-% Structuring element to use for erosions and ilations
+% on most things I used 20k but testing with 10k
+min = 10000; %(generally I use 50k)
 se = strel('disk', 5);
 
 imerr = zeros(size(img));
+
 for i=1:size(img, 3)
     imerr(:,:,i) = imerode(imfill(img(:,:,i), 'holes'), se);
 end
 
 l = bwlabeln(imerr);
 s = regionprops(l);
-idx = find([s.Area] >= minGrainSize );
+idx = find([s.Area] >= min );
 
 % assign a 0 for if empty image given
 grain_stats = [];
 grain_stats.None = 0;
 
-rawstats = [];
-rawstats.None = 0;
-
 for grain=1:size(idx,2)
+    grain;
+    
     single_grain = ismember(l, idx(grain));
     
     % add removed content
@@ -58,27 +57,18 @@ for grain=1:size(idx,2)
     
     
     if grain == 1 
-        try
         mkdir(strcat(imagename, '-grain-stacks/'));
-        [grain_stats, c, Im, rawstats] = extract_features(single_grain, b, imagename, grain);
-        catch 
-            sprintf('Whoops'); 
-            continue
-        end
+        [grain_stats, c, Im] = extract_features(single_grain, b, imagename, grain, masked_grain);
     else
-        try
-        [grain_stats(end+1), c, Im, rawstats(end+1)] = extract_features(single_grain, b, imagename, grain);
-        catch
-           sprintf('Whoops');
-           continue
-        end 
+        [grain_stats(end+1), c, Im] = extract_features(single_grain, b, imagename, grain,  masked_grain);
+        
     end
     
     
     masked_grain = bsxfun(@times, masked_grain(:,:,c), cast(single_grain(:,:,c), 'like', masked_grain(:,:,c)));
     
     % write single pictures of grain
-    %imshow(Im);
+    imshow(Im);
     dirname = strcat(imagename, '-grains/');
     mkdir(dirname);
     savename = strcat(dirname, 'grain-', num2str(grain), '-slice-', num2str(c) ,'.png');
@@ -92,20 +82,22 @@ end
 
 
 
-    function [stats, c, Im, rawstats] = extract_features(A, b, imagename, grainNum)
-                
-        stats.length = (size(A, 3) * conv) / 1000;
-        rawstats.length = (size(A,3));
+    function [stats, c, Im] = extract_features(A, b, imagename, grainNum, masked)
         
+        conv = 68.8;
+   
+        stats.length = (size(A, 3) * conv) / 1000;
         c = floor(size(A, 3) / 2);
-        Im = imfill(A(:, :, c), 'holes');
+        Im = imfill(A(:, :, c), 'holes');%A(:, :, c);
+        %Im = A(:,:,c);
         st = regionprops(Im, 'all');
+        
         attempts = 1;
         
+        %% TODO FLIP BETWEEN UP AND DOWN SEARCH
         while size(st,1) ~= 1
             
             stats.length = (size(A, 3) * conv) / 1000;
-            rawstats.length = (size(A,3));
             c = floor(size(A, 3) / 2) + attempts;
             Im = imfill(A(:, :, c), 'holes');%A(:, :, c);
             st = regionprops(Im, 'all');
@@ -113,21 +105,16 @@ end
             
         end
         
-
-  
+        
         stats.width = (st.MajorAxisLength * conv) / 1000;
         stats.depth = st.MinorAxisLength * conv / 1000;
         stats.ratio = stats.length / stats.width;
-        stats.circularity = 4 * pi * (st.Area / st.Perimeter ^ 2);
         
-        rawstats.width = st.MajorAxisLength; 
-        rawstats.depth = st.MinorAxisLength; 
-
+        stats.circularity = 4 * pi * (st.Area / st.Perimeter ^ 2);
         
         vst = regionprops(A, 'FilledArea');
         
-        stats.volume = (vst.FilledArea * (conv^3)) / 100000000; 
-        rawstats.volume = vst.FilledArea;
+        stats.volume = (vst.FilledArea * conv) / 1000; 
         
         C = st.ConvexImage - st.Image;
         
@@ -136,13 +123,10 @@ end
         mal = sort([vst.MinorAxisLength], 'descend');
         
         stats.crease_depth = (mal(1) * conv) / 1000;
-        rawstats.crease_depth = mal(1); 
         
-        stats.surface_area = (imSurface(A) * (conv^2)) / 100000000;
-        rawstats.surface_area = imSurface(A); 
+        stats.surface_area = (imSurface(A) * conv) / 1000;
         
-        stats.crease_volume = (crease_depth(A) * (conv^3)) / 100000000;
-        rawstats.crease_volume = crease_depth(A);
+        stats.crease_volume = (crease_depth(A) * conv);
         
         centroid = regionprops(A, 'Centroid');
         centroid = centroid.Centroid;
@@ -154,6 +138,8 @@ end
         % Write single grain as a tif
         file_output_img = strcat(imagename, '-grain-stacks/', 'stack-grain-', num2str(grainNum), '.tif');
         delete (file_output_img);
+        
+        A = uint8(A*255);
         
         for K=1:length(A(1, 1, :))
             imwrite(A(:, :, K), file_output_img, 'WriteMode', 'append','Compression','none');

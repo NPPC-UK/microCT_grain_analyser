@@ -1,48 +1,46 @@
 function [ img, masked] = cleanWheat( filename )
-% cleanWheat takes the filename of raw ISQ image, returns segmented image
-% returns both a black and white image and a masked greyscale image
 
-% Read in the raw image
-img = (readISQ(filename)); 
-% Create a copy of the original for use as final masked image
+img = readISQ(filename); 
+
+%img = filename; 
+%resizeFactor = size(img).*[1/2 1/2 1/2];
+%img = resize(img, resizeFactor); 
 masked = img;
 
 % generate mask for outter circle
 middle_slice = round(size(img, 3)/2);
-% largest blob is always the tube in the scan
-mask = extractBiggestBlob(im2bw(img(:,:,middle_slice), graythresh(img(:,:,middle_slice))), 1);
-% tube moves slightly during scanning, dilating makes it consistantly
-% removable 
+mask = extractBiggestBlob(im2bw(img(:,:,middle_slice), graythresh(img(:,:,400))), 1);
 mask = imdilate(mask, strel('disk', 15));
 
-% structuring element 
-se = strel('disk', 5); % changed from 5
-
-% calculate thresholding value 
+se = strel('disk', 2); % changed from 5
 [pixelCounts, grayLevels] = imhist(img(:));
 cdf = cumsum(pixelCounts) / sum(pixelCounts);
-thresholdIndex = find(cdf < 0.90, 1, 'last'); 
+thresholdIndex = find(cdf < 0.92, 1, 'last');
 thresholdValue = grayLevels(thresholdIndex);
 
-% prepare each and every slice of the 3D image stack
 for slice = 1:size(img, 3)
 
-    I = img(:,:,slice) > thresholdValue;  
-    tmp = imerode(I, se); 
-    tmp = medfilt2(tmp, [5,5]); 
-    tmp = imdilate(tmp, se);  
+    I = img(:,:,slice) > thresholdValue;
+    tmp = imerode(I, se);
+    tmp = medfilt2(tmp, [8,8]);
+    tmp = imdilate(tmp, se);
     I = tmp & I;
-    I = I - mask;
+    I = I - mask;    
     img(:,:,slice) = I;
     
 end
+
+l = bwlabeln(img);
+s = regionprops(l);
+idx = find([s.Area] >= 8000 );
+img = ismember(l, idx);
+
 
 % generate the masked outline
 for slice= 1:size(img, 3)
     masked(:,:,slice) = bsxfun(@times, masked(:,:,slice), cast(img(:,:,slice), 'like', masked(:,:,slice)));
 end
 
-% ensure that returned img is made binary 
 img = logical(img);
 
 end
