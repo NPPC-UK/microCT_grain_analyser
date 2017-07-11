@@ -1,4 +1,4 @@
-function [ img, masked] = cleanWheat( filename )
+function [ img, masked] = cleanWheat( filename, seSize )
 % cleanWheat takes the filename of raw ISQ image, returns segmented image
 % returns both a black and white image and a masked greyscale image
 
@@ -16,21 +16,23 @@ mask = extractBiggestBlob(im2bw(img(:,:,middle_slice), graythresh(img(:,:,middle
 mask = imdilate(mask, strel('disk', 15));
 
 % structuring element 
-se = strel('disk', 5); % changed from 5
+se = strel('disk', seSize); % changed from 5
 
 % calculate thresholding value 
 [pixelCounts, grayLevels] = imhist(img(:));
 cdf = cumsum(pixelCounts) / sum(pixelCounts);
-thresholdIndex = find(cdf < 0.90, 1, 'last'); 
+thresholdIndex = find(cdf < 0.92, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
 % prepare each and every slice of the 3D image stack
 for slice = 1:size(img, 3)
 
     I = img(:,:,slice) > thresholdValue;  
-    tmp = imerode(I, se); 
-    tmp = medfilt2(tmp, [5,5]); 
-    tmp = imdilate(tmp, se);  
+    
+    %tmp = imerode(I, se); 
+    %tmp = medfilt2(tmp, [5,5]); 
+    
+    tmp = imopen(I, se);  
     I = tmp & I;
     I = I - mask;
     img(:,:,slice) = I;
