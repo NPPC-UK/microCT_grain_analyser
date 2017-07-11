@@ -2,7 +2,7 @@ function [ grain_stats, rawstats ] = countGrain( img, imagename, immask , conv, 
 % countGrain takes an image, name,masked image conv size and minimum grain size, returns grain stats
 % grain_stats gives metric measurements and rawstats pixel value measurements
 
-% Structuring element to use for erosions and ilations
+% Structuring element to use for erosions and dilations
 se = strel('disk', 5);
 
 imerr = zeros(size(img));
@@ -21,7 +21,10 @@ grain_stats.None = 0;
 rawstats = [];
 rawstats.None = 0;
 
+
 for grain=1:size(idx,2)
+    
+    grain
     single_grain = ismember(l, idx(grain));
     
     % add removed content
@@ -126,7 +129,7 @@ end
         
         vst = regionprops(A, 'FilledArea');
         
-        stats.volume = (vst.FilledArea * (conv^3)) / 100000000; 
+        stats.volume = (vst.FilledArea * (conv^3)) / (1000^3); 
         rawstats.volume = vst.FilledArea;
         
         C = st.ConvexImage - st.Image;
@@ -138,10 +141,10 @@ end
         stats.crease_depth = (mal(1) * conv) / 1000;
         rawstats.crease_depth = mal(1); 
         
-        stats.surface_area = (imSurface(A) * (conv^2)) / 100000000;
+        stats.surface_area = (imSurface(A) * (conv^2)) / 1000^2;
         rawstats.surface_area = imSurface(A); 
         
-        stats.crease_volume = (crease_depth(A) * (conv^3)) / 100000000;
+        stats.crease_volume = (crease_depth(A) * (conv^3)) / (1000^3);
         rawstats.crease_volume = crease_depth(A);
         
         centroid = regionprops(A, 'Centroid');
