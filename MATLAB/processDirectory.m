@@ -1,4 +1,4 @@
-function processDirectory(dirpath, voxelSize, minGrainSize)
+function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
 % given a directory will scan for ISQ files and process
 % e.g.'dirpath/*/*.ISQ'
 
@@ -7,24 +7,26 @@ files = rdir(dirpath);
 
 for file=1:size(files, 1)
     
+    files(file).name
+    
     % get filename
     filename = files(file).name;
     % segment image initially in 2D  
-    [img, masked] = cleanWheat(files(file).name);
+    [img, original] = cleanWheat(files(file).name, structuringEleSize);
+    
+    
     % perform 3D watershedding to segment any leftover data
     img = watershedSplit3D(img);
     
+    % generate mask after WS
+    % using the original for size/space saving
+    for slice= 1:size(img, 3)
+        original(:,:,slice) = bsxfun(@times, original(:,:,slice), cast(img(:,:,slice), 'like', original(:,:,slice)));
+    end
+    
+    
     % count objects
-    [img, ~] = filterSmallObjs(img, minGrainSize);
-    
-    % count Rachis
-    [rachis, top, bottom] = segmentRachis(masked); 
-    
-    % compute rachis stats for use when rejoining spikes
-    rstats.top = top; 
-    rstats.bottom = bottom; 
-    % write rachis data to file
-    writetable((struct2table(rstats)), strcat(filename,'-rstats.csv'));
+    [img, masked, ~] = filterSmallObjs(original, minGrainSize);
     
     % perform grain measurement gathering!
     [stats, rawstats] = countGrain(img, files(file).name, masked, voxelSize, minGrainSize);

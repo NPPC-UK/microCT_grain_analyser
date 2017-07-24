@@ -1,4 +1,4 @@
-function [ largest, s] = filterSmallObjs( wheat_img, minSize )
+function [ largest, mask, s] = filterSmallObjs( wheat_img, minSize )
 % removes objects smaller than minSize from wheat_img
 % try and catch if nothing is found. 
 try    
@@ -12,6 +12,16 @@ catch
 end
 % clean up stats a little
 s([s.Area] < minSize) = [];
+
+% preallocate
+mask = wheat_img;
+
+% remask
+for slice= 1:size(wheat_img, 3)
+    mask(:,:,slice) = bsxfun(@times, wheat_img(:,:,slice), cast(largest(:,:,slice), 'like', wheat_img(:,:,slice)));    
+end
+
+
 
 end
 
