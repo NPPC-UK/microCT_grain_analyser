@@ -7,6 +7,8 @@ files = rdir(dirpath);
 
 for file=1:size(files, 1)
     
+    files(file).name
+    
     % get filename
     filename = files(file).name;
     % segment image initially in 2D  
