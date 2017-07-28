@@ -16,10 +16,10 @@
 
 
 %Setup parms
-directory = '~/Data/00000079/*/*.ISQ'; 
-structEleSize = 3;
-voxelSize = 29.6;
-minSize = 7000; 
+directory = '~/Figure8Files/Oats/*.ISQ'; 
+structEleSize = 5;
+voxelSize = 68.8;
+minSize = 1000; 
 
 tic % start timer
 % Process the file directory! 

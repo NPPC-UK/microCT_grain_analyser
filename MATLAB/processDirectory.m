@@ -47,5 +47,7 @@ for file=1:size(files, 1)
         imwrite(masked(:, :, K), file_output_img, 'WriteMode', 'append','Compression','none');
     end
     
+    writeTif(img, 'oat.tif'); 
+    
 end
 end
