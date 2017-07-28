@@ -28,6 +28,7 @@ A brief setup of environment variables are required, this is an example:
 #+begin_src octave
 voxelSize = 68.8; % or whatever micro-meter to voxel ratio was used in scanning
 minimumGrainSize = 10000; % a minimum grain size of interest
+structEleSize = 5; % a size of structuring element to use for morphological operations
 
 % Every folder in CT-Scans folder and every ISQ file in them
 directory = '/home/files/CT-Scans/*/*.ISQ'; 
@@ -37,7 +38,7 @@ directory = '/home/files/CT-Scans/*/*.ISQ';
 Running the program is as simple as calling the processDirectory function.
 #+begin_src octave
 % Will process all files found by rdir function
-processDirectory(directory, voxelSize, minimumGrainSize);
+processDirectory(directory, structEleSize, voxelSize, minimumGrainSize);
 #+end_src 
 
 * Files and Functions
