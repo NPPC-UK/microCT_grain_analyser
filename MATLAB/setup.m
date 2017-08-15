@@ -16,7 +16,7 @@
 
 
 %Setup parms
-directory = '~/Figure8Files/Oats/*.ISQ'; 
+directory = 'c:/Users/Nathan/Desktop/*.ISQ;1'; 
 structEleSize = 5;
 voxelSize = 68.8;
 minSize = 1000; 

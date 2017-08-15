@@ -21,7 +21,7 @@ se = strel('disk', seSize); % changed from 5
 % calculate thresholding value 
 [pixelCounts, grayLevels] = imhist(img(:));
 cdf = cumsum(pixelCounts) / sum(pixelCounts);
-thresholdIndex = find(cdf < 0.90, 1, 'last'); 
+thresholdIndex = find(cdf < 0.92, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
 % prepare each and every slice of the 3D image stack

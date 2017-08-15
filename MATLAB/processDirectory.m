@@ -16,7 +16,7 @@ for file=1:size(files, 1)
     
     
     % perform 3D watershedding to segment any leftover data
-    img = watershedSplit3D(img);
+    %img = watershedSplit3D(img);
     
     % generate mask after WS
     % using the original for size/space saving
@@ -42,12 +42,7 @@ for file=1:size(files, 1)
     
     % Write segmented image to file
     file_output_img = strcat(filename, 'cleaned.tif');
-    delete (file_output_img);
-    for K=1:length(masked(1, 1, :))
-        imwrite(masked(:, :, K), file_output_img, 'WriteMode', 'append','Compression','none');
-    end
-    
-    writeTif(img, 'oat.tif'); 
-    
+    writeTif(masked, file_output_img);
+        
 end
 end
