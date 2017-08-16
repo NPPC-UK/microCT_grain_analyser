@@ -3,7 +3,13 @@ function [ img, original] = cleanWheat( filename, seSize )
 % returns both a black and white image and a masked greyscale image
 
 % Read in the raw image
-img = (readISQ(filename)); 
+
+if contains(filename, '.tif')
+    img = readTif(filename);
+else
+    img = readISQ(filename);  
+end
+
 % Create a copy of the original for use as final masked image
 original = img;
 
