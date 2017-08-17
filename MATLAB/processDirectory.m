@@ -14,7 +14,7 @@ for file=1:size(files, 1)
     
     
     % perform 3D watershedding to segment any leftover data
-    %img = watershedSplit3D(img);
+    img = watershedSplit3D(img);
     
     % generate mask after WS
     % using the original for size/space saving

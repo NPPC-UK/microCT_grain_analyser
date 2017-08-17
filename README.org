@@ -53,8 +53,11 @@ filterSmallObjects attempts to remove all objects which are smaller than the spe
 imSurface is a library originally by David Legland. It measures the surface area in pixels of a 3D object. 
 ** processDirectory
 processDirectory is the main controlling function of this software, it moves image data around from function to function, gathers image results/measurements and saves it to disk from here.
-** rdir
-rdir is a function which recursively finds files, it is used to find files in sub-directories by using the '*' wildcard in the directory name parameter. 
+** subdir
+subdir is a function which recursively finds files, it is used to find files in sub-directories by using the '*' wildcard in the directory name parameter. 
+
+- This function was redone as the previous 'rdir' has operating issues with certain versions of windows. 
+
 ** readISQ
 readISQ originally developed by Johan Karlsson, we have modified it to make speed increases and added specific slice loading, this helps for increased speed when processing larger images
 ** segmentRachis
