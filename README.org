@@ -19,6 +19,8 @@
 #+LaTeX_HEADER: \rfoot{\thepage\ of \pageref{LastPage}}
 #+LATEX: \clearpage
 
+* Releases
+This software works as a rolling release, adding new features and optimising and as such please refer to [[https://github.com/NPPC-UK/microCT_grain_analyser/releases][releases]] for the latest stable version.
 
 * Usage
 Usage of this software is straightforward. Inputting a directory, a voxel size and a minimum size of expected grain objects will output and write grain statistics and image to file.
