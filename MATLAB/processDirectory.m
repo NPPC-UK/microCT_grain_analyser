@@ -3,20 +3,12 @@ function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
 % e.g.'dirpath/*/*.ISQ'
 
 % grab all the files to process
-files = rdir(dirpath);
-
+files = subdir(dirpath);
 for file=1:size(files, 1)
     
-    files(file).name
     
-    % get filename
-    if ispc
-       filename = strcat(files(file).folder,'\',files(file).name);
-    else
-       filename = files(file).name;
-    end
+    filename = files(file).name;
     
-   
     % segment image initially in 2D  
     [img, original] = cleanWheat(filename, structuringEleSize);
     
