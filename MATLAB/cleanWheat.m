@@ -1,4 +1,4 @@
-function [ img, original] = cleanWheat( filename, seSize )
+function [bw,gray] = cleanWheat( filename, seSize, minSize )
 % cleanWheat takes the filename of raw ISQ image, returns segmented image
 % returns both a black and white image and a masked greyscale image
 
@@ -12,7 +12,7 @@ else
 end
 
 % Create a copy of the original for use as final masked image
-original = img;
+gray = img;
 
 % generate mask for outter circle
 middle_slice = round(size(img, 3)/2);
@@ -28,22 +28,26 @@ se = strel('disk', seSize); % changed from 5
 % calculate thresholding value 
 [pixelCounts, grayLevels] = imhist(img(:));
 cdf = cumsum(pixelCounts) / sum(pixelCounts);
-thresholdIndex = find(cdf < 0.92, 1, 'last'); 
+thresholdIndex = find(cdf < 0.90, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
 % prepare each and every slice of the 3D image stack
 for slice = 1:size(img, 3)
-
     I = img(:,:,slice) > thresholdValue;  
     tmp = imopen(I, se);  
     tmp = medfilt2(tmp, [2,2]); 
     I = tmp & I;
     I = I - mask;
     img(:,:,slice) = I;
-    
 end
 
-% ensure that returned img is made binary 
-img = logical(img);
+% Make sure image is binary 
+bw = logical(img);
+
+% Split up image as needed 
+bw = watershedSplit3D(bw); 
+
+% Filter out any left over objects which haven't been split
+[bw, gray] = filterSmallObjs(bw, gray, minSize); 
 
 end

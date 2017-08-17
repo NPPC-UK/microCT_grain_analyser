@@ -16,7 +16,7 @@
 
 
 %Setup parms
-directory = 'c:/Users/Nathan/Desktop/Sample76/small/*.ISQ;1'; 
+directory = 'C:/Users/Nathan/Documents/Selection of 79/*.ISQ'; 
 structEleSize = 5;
 voxelSize = 34.4;
 minSize = 100; 

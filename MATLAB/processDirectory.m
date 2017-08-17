@@ -2,45 +2,41 @@ function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
 % given a directory will scan for ISQ files and process
 % e.g.'dirpath/*/*.ISQ'
 
+% Disable file overwrite warnings so we can see output
+warning('off', 'MATLAB:DELETE:FileNotFound');
+warning('off', 'MATLAB:MKDIR:DirectoryExists');
+
 % grab all the files to process
 files = subdir(dirpath);
 for file=1:size(files, 1)
-    
-    
+       
     filename = files(file).name;
     
+    fprintf('Currently on file: %s\nThis is file %d of %d\n', filename, file, size(files,1));
+    
     % segment image initially in 2D  
-    [img, original] = cleanWheat(filename, structuringEleSize);
-    
-    
-    % perform 3D watershedding to segment any leftover data
-    img = watershedSplit3D(img);
-    
-    % generate mask after WS
-    % using the original for size/space saving
-    for slice= 1:size(img, 3)
-        original(:,:,slice) = bsxfun(@times, original(:,:,slice), cast(img(:,:,slice), 'like', original(:,:,slice)));
-    end
-    
-    
-    % count objects
-    [img, masked, ~] = filterSmallObjs(original, minGrainSize);
+    [bw, gray] = cleanWheat(filename, structuringEleSize, minGrainSize);
     
     % perform grain measurement gathering!
-    [stats, rawstats] = countGrain(img, filename, masked, voxelSize, minGrainSize);
+    [stats, rawstats] = countGrain(bw, filename, gray, voxelSize, minGrainSize);
     
     % write stats file
     file_output_stats = strcat(filename, '.csv');
     file_output_rawstats = strcat(filename, '-raw_stats.csv');
+   
     % clear previous stat files if they exist
     delete (file_output_stats);
     delete (file_output_rawstats);
     writetable(struct2table(stats), file_output_stats);
     writetable(struct2table(rawstats), file_output_rawstats);
     
-    % Write segmented image to file
-    file_output_img = strcat(filename, 'cleaned.tif');
-    writeTif(masked, file_output_img);
+    % Write segmented images to file
+    file_output_bw = strcat(filename, 'bw-segmented.tif');
+    writeTif(bw, file_output_bw);
+    
+    file_output_gray = strcat(filename, 'gray-segmented.tif');
+    writeTif(gray, file_output_gray);
+    
         
 end
 end
