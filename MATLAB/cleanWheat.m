@@ -3,8 +3,9 @@ function [ img, original] = cleanWheat( filename, seSize )
 % returns both a black and white image and a masked greyscale image
 
 % Read in the raw image
-
-if contains(filename, '.tif')
+% using older function strfind to avoid issues with older versions of
+% MATLAB
+if strfind(filename, '.tif')
     img = readTif(filename);
 else
     img = readISQ(filename);  

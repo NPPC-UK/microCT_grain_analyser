@@ -10,9 +10,15 @@ for file=1:size(files, 1)
     files(file).name
     
     % get filename
-    filename = files(file).name;
+    if ispc
+       filename = strcat(files(file).folder,'\',files(file).name);
+    else
+       filename = files(file).name;
+    end
+    
+   
     % segment image initially in 2D  
-    [img, original] = cleanWheat(files(file).name, structuringEleSize);
+    [img, original] = cleanWheat(filename, structuringEleSize);
     
     
     % perform 3D watershedding to segment any leftover data
@@ -29,7 +35,7 @@ for file=1:size(files, 1)
     [img, masked, ~] = filterSmallObjs(original, minGrainSize);
     
     % perform grain measurement gathering!
-    [stats, rawstats] = countGrain(img, files(file).name, masked, voxelSize, minGrainSize);
+    [stats, rawstats] = countGrain(img, filename, masked, voxelSize, minGrainSize);
     
     % write stats file
     file_output_stats = strcat(filename, '.csv');

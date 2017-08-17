@@ -16,10 +16,10 @@
 
 
 %Setup parms
-directory = 'c:/Users/Nathan/Desktop/*.ISQ;1'; 
+directory = 'c:/Users/Nathan/Desktop/Sample76/small/*.ISQ;1'; 
 structEleSize = 5;
-voxelSize = 68.8;
-minSize = 1000; 
+voxelSize = 34.4;
+minSize = 100; 
 
 tic % start timer
 % Process the file directory! 
