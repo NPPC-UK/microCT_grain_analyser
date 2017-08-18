@@ -37,12 +37,15 @@ end
 
 % prepare each and every slice of the 3D image stack
 for slice = 1:size(img, 3)
-    I = img(:,:,slice) > thresholdValue;  
+    
+    I = img(:,:,slice) > thresholdValue;
     tmp = imopen(I, se);  
-    tmp = medfilt2(tmp, [3,3]); 
+    tmp = medfilt2(tmp, [3,3]);
+    tmp = imclose(tmp, se); 
     I = tmp & I;
     I = I - mask;
     img(:,:,slice) = I;
+    
 end
 
 
