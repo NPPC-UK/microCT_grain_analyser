@@ -31,21 +31,30 @@ cdf = cumsum(pixelCounts) / sum(pixelCounts);
 thresholdIndex = find(cdf < 0.90, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
+if isempty(which('ginfo'))
+   img = gpuArray(img);  
+end
+
 % prepare each and every slice of the 3D image stack
 for slice = 1:size(img, 3)
     I = img(:,:,slice) > thresholdValue;  
     tmp = imopen(I, se);  
-    tmp = medfilt2(tmp, [2,2]); 
+    tmp = medfilt2(tmp, [3,3]); 
     I = tmp & I;
     I = I - mask;
     img(:,:,slice) = I;
 end
 
-% Make sure image is binary 
-bw = logical(img);
+
+% Make sure image is binary
+if isempty(which('ginfo'))
+    bw = logical(gather(img));
+else
+    bw = logical(img);
+end
 
 % Split up image as needed 
-bw = watershedSplit3D(bw); 
+%bw = watershedSplit3D(bw); 
 
 % Filter out any left over objects which haven't been split
 [bw, gray] = filterSmallObjs(bw, gray, minSize); 

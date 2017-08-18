@@ -16,10 +16,10 @@
 
 
 %Setup parms
-directory = 'C:/Users/Nathan/Documents/Selection of 79/*.ISQ'; 
+directory = 'C:/Users/Nathan/Desktop/Pre-processing-tifs/*.tif'; 
 structEleSize = 5;
-voxelSize = 34.4;
-minSize = 100; 
+voxelSize = 68.8;
+minSize = 2000; 
 
 tic % start timer
 % Process the file directory! 

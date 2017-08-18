@@ -12,6 +12,7 @@ for k = 1:num_images
     img(:,:,k) = imread(filename, k);
 end
 
+img = uint8(img); 
 
 end
 
