@@ -1,7 +1,7 @@
 function [] = ISQ2Tiff( directory )
 % Converts all ISQ files found in the directory 
 % into ISQ 
-files = rdir(directory); 
+files = subdir(directory); 
 
 for f=1:size(files)
    
