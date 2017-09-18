@@ -57,7 +57,7 @@ else
 end
 
 % Split up image as needed 
-%bw = watershedSplit3D(bw); 
+bw = watershedSplit3D(bw); 
 
 % Filter out any left over objects which haven't been split
 [bw, gray] = filterSmallObjs(bw, gray, minSize); 
