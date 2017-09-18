@@ -31,7 +31,7 @@ cdf = cumsum(pixelCounts) / sum(pixelCounts);
 thresholdIndex = find(cdf < 0.90, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
-if isempty(which('ginfo'))
+if ~isempty(which('ginfo'))
    img = gpuArray(img);  
 end
 
@@ -50,7 +50,7 @@ end
 
 
 % Make sure image is binary
-if isempty(which('ginfo'))
+if ~isempty(which('ginfo'))
     bw = logical(gather(img));
 else
     bw = logical(img);
