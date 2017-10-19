@@ -16,6 +16,14 @@ for file=1:size(files, 1)
     
     % segment image initially in 2D  
     [bw, gray] = cleanWheat(filename, structuringEleSize, minGrainSize);
+
+    % Write information on rachis
+    rstats = []
+    rstats.rtop = rtop;
+    rstats.rbot = rbot;
+    file_output_rstats = strcat(filename, '-rachis.csv')
+    delete(file_output_rstats);
+    writetable(struct2table(rstats), file_output_rstats);
     
     % perform grain measurement gathering!
     [stats, rawstats] = countGrain(bw, filename, gray, voxelSize, minGrainSize);
