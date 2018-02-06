@@ -8,8 +8,8 @@ bw = logical(A);
 se = strel('disk', 5);
 
 % Minimise object missshapen-ness
-bw = imdilate(bw, se);
 bw = imerode(bw, se);
+bw = imdilate(bw, se);
 
 % Fill in any left over holes
 bw = imfill(bw, 'holes');

@@ -5,7 +5,7 @@ info = imfinfo(filename);
 num_images = numel(info);
 height = info(1).Width;  
 width = info(1).Height;
-img = zeros(height, width , num_images);
+%img = zeros(height, width , num_images);
 
 
 for k = 1:num_images

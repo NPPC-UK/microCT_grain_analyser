@@ -1,4 +1,4 @@
-function [bw,gray] = cleanWheat( filename, seSize, minSize )
+function [bw,gray, r, rtop, rbottom] = cleanWheat( filename, seSize, minSize )
 % cleanWheat takes the filename of raw ISQ image, returns segmented image
 % returns both a black and white image and a masked greyscale image
 
@@ -28,10 +28,11 @@ se = strel('disk', seSize); % changed from 5
 % calculate thresholding value 
 [pixelCounts, grayLevels] = imhist(img(:));
 cdf = cumsum(pixelCounts) / sum(pixelCounts);
-thresholdIndex = find(cdf < 0.90, 1, 'last'); 
+% for the prims lets let through a little more just initally 
+thresholdIndex = find(cdf < 0.88, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
-if isempty(which('ginfo'))
+if ~isempty(which('ginfo'))
    img = gpuArray(img);  
 end
 
@@ -50,14 +51,17 @@ end
 
 
 % Make sure image is binary
-if isempty(which('ginfo'))
+if ~isempty(which('ginfo'))
     bw = logical(gather(img));
 else
     bw = logical(img);
 end
 
+% Want to grab these BEFORE we filter out small objects
+[r, rtop, rbottom] = segmentRachis(img);
+
 % Split up image as needed 
-%bw = watershedSplit3D(bw); 
+bw = watershedSplit3D(bw); 
 
 % Filter out any left over objects which haven't been split
 [bw, gray] = filterSmallObjs(bw, gray, minSize); 

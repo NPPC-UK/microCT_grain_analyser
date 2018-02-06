@@ -16,10 +16,12 @@
 
 
 %Setup parms
-directory = 'C:/Users/Nathan/Desktop/Pre-processing-tifs/*.tif'; 
-structEleSize = 5;
+
+directory = '/home/phenomics/Primitives/*.ISQ*';
+
+structEleSize = 5; % Changed this, switched on WS and rerunning
 voxelSize = 68.8;
-minSize = 2000; 
+minSize = 1000; 
 
 tic % start timer
 % Process the file directory! 
