@@ -1,27 +1,25 @@
-function [ largest, s] = filterSmallObjs( wheat_img )
-
-% set a minimum wheat size to find
-min = 10000; 
-%min = 119131;
-
-tic
+function [ img, gray] = filterSmallObjs( img, gray, minSize )
+% removes objects smaller than minSize from wheat_img
 % try and catch if nothing is found. 
-try
-    %l = bwconncomp(wheat_img); % whilst this is generally better 
-    % bwlabeln works with find better
-    
-    l = bwlabeln(wheat_img);
+try    
+    l = bwlabeln(img);
     s = regionprops(l);
-    idx = find([s.Area] >= min );
-    largest = ismember(l, idx);
+    idx = find([s.Area] >= minSize );
+    tmp = ismember(l, idx);
     
 catch
-    largest = wheat_img;
+    % if there's no data in the image this is the default 
+    tmp = img;
 end
-toc
 
-% clean up stats a little
-s([s.Area] < min) = [];
+% Switcheroo 
+img = tmp; 
+clear tmp; 
+
+
+for slice=1:size(img,3)
+    gray(:,:,slice) = bsxfun(@times, gray(:,:,slice), cast(img(:,:,slice),class(gray(:,:,slice))));
+end
 
 end
 

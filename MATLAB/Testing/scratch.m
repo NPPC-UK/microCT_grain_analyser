@@ -1,18 +1,12 @@
-function [bw,gray, r, rtop, rbottom] = cleanWheat( filename, seSize, minSize )
-% cleanWheat takes the filename of raw ISQ image, returns segmented image
-% returns both a black and white image and a masked greyscale image
+testFile = '/home/phenomics/Primitives/00002881/C0002782.ISQ'; 
 
-% Read in the raw image
-% using older function strfind to avoid issues with older versions of
-% MATLAB
-if strfind(filename, '.tif')
-    img = readTif(filename);
-else
-    img = readISQ(filename);  
-end
+img = readISQ(testFile); 
 
 % Create a copy of the original for use as final masked image
 gray = img;
+minSize = 1000;
+
+seSize = 7; 
 
 % generate mask for outter circle
 middle_slice = round(size(img, 3)/2);
@@ -28,8 +22,7 @@ se = strel('disk', seSize); % changed from 5
 % calculate thresholding value 
 [pixelCounts, grayLevels] = imhist(img(:));
 cdf = cumsum(pixelCounts) / sum(pixelCounts);
-% for the prims lets let through a little more just initally 
-thresholdIndex = find(cdf < 0.88, 1, 'last'); 
+thresholdIndex = find(cdf < 0.93, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
 if ~isempty(which('ginfo'))
@@ -60,10 +53,10 @@ end
 % Want to grab these BEFORE we filter out small objects
 [r, rtop, rbottom] = segmentRachis(img);
 
+
+
 % Split up image as needed 
-bw = watershedSplit3D(bw); 
+bw = watershedSplit3DTestMode(bw); 
 
 % Filter out any left over objects which haven't been split
 [bw, gray] = filterSmallObjs(bw, gray, minSize); 
-
-end

@@ -1,38 +1,53 @@
-function processDirectory(dirpath)
-% Given a directory will scan for ISQ files and process
+function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
+% given a directory will scan for ISQ files and process
+% e.g.'dirpath/*/*.ISQ'
 
-% Grab all the files to process
-%files = rdir('~/ISQ/76/*/*.ISQ');
-% '/media/phenomics/storage/CT-Scans/00000076/512x512/*/*.ISQ'
-files = rdir(dirpath);
+% Disable file overwrite warnings so we can see output
+warning('off', 'MATLAB:DELETE:FileNotFound');
+warning('off', 'MATLAB:MKDIR:DirectoryExists');
 
-tic
+% grab all the files to process
+files = subdir(dirpath);
 for file=1:size(files, 1)
-    
-    file
-    filename = files(file).name;
-    [img, masked] = cleanWheat(files(file).name);
-    %img = watershedSplit3D(img);
-    
-    % count objects
-    [img, ~] = filterSmallObjs(img);
-    
-    % can comment this out if you just want clean images to process other
-    % places 
-    stats = countGrain(img, files(file).name, masked);
-    
-    % write stats file
-    file_output_stats = strcat(filename, '.csv');
-    delete (file_output_stats);
-    writetable(struct2table(stats), file_output_stats);
-    
-    % Write segmented file to inspect
-    file_output_img = strcat(filename, 'cleaned.tif');
-    delete (file_output_img);
-    for K=1:length(masked(1, 1, :))
-        imwrite(masked(:, :, K), file_output_img, 'WriteMode', 'append','Compression','none');
-    end
-    
+   
+    try
+        filename = files(file).name;
+
+        fprintf('Currently on file: %s\nThis is file %d of %d\n', filename, file, size(files,1));
+
+        % segment image initially in 2D  
+        [bw, gray, r, rtop, rbot] = cleanWheat(filename, structuringEleSize, minGrainSize);
+
+	% Write rachis information and file
+	file_output_rachis = strcat(filename, '-rachis.tif');
+	writeTif(r, file_output_rachis);
+        rstats = [];
+        rstats.rtop = rtop;
+        rstats.rbot = rbot;
+        file_output_rstats = strcat(filename, '-rachis.csv');
+        delete(file_output_rstats);
+        writetable(struct2table(rstats), file_output_rstats);
+        
+        % perform grain measurement gathering!
+        [stats, rawstats] = countGrain(bw, filename, gray, voxelSize, minGrainSize);
+
+        % write stats file
+        file_output_stats = strcat(filename, '.csv');
+        file_output_rawstats = strcat(filename, '-raw_stats.csv');
+
+        % clear previous stat files if they exist
+        delete (file_output_stats);
+        delete (file_output_rawstats);
+        writetable(struct2table(stats), file_output_stats);
+        writetable(struct2table(rawstats), file_output_rawstats);
+
+        % Write segmented images to file
+        file_output_bw = strcat(filename, 'bw-segmented.tif');
+        writeTif(bw, file_output_bw);
+
+        file_output_gray = strcat(filename, 'gray-segmented.tif');
+        writeTif(gray, file_output_gray);
+
+    end    
 end
-toc
 end

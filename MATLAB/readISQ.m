@@ -1,4 +1,4 @@
-function [image,metadata]=readISQ(filename,slicerange,window,progress)
+function [image,metadata]=readISQ(filename,slicerange)
 
 % [image]=readISQ(filename) reads the image in the file
 % [image,metadata]=readISQ(filename) also provides some metadata
@@ -6,15 +6,14 @@ function [image,metadata]=readISQ(filename,slicerange,window,progress)
 % [image]=readISQ(filename,[first_slice_nr,last_slice_nr]) reads a range of slices
 % [image]=readISQ(filename,slicerange,window) reads the
 %   window from each slice defined by the vector window=[minx,maxx,miny,maxy]
-% [image]=readISQ(filename,slicerange,window,progress)
-%   progress=1 displays progress bar (0 no bar)
+
 %
 % Originally by:
 % Johan Karlsson, AstraZeneca, 2017
 % (https://uk.mathworks.com/matlabcentral/fileexchange/view_license?file_info_id=62066)
-% 
-% See also http://www.scanco.ch/en/support/customer-login/faq-customers/faq-customers-general.html
-
+% Modified by:
+% Nathan Hughes
+    
 fid=fopen(filename);
 h=fread(fid,128,'int'); % header
 metadata.dimx_p=h(12);
@@ -45,36 +44,22 @@ if nargin >= 2
     end    
 end
 
-if nargin<3 || isempty(window)
-    window=[1,metadata.dimx_p,1,metadata.dimy_p];
-end
-if nargin<4
-    progress=0;
-end
+
+
 
 %preallocation
 image = zeros(metadata.dimx_p, metadata.dimy_p,last_slice);
 
 for slice=first_slice:last_slice
-    if progress
-        waitbar((slice-first_slice)/(last_slice-first_slice),wb);
-    end
     fseek(fid,512*(h(end)+1)+metadata.dimx_p*metadata.dimy_p*2*(slice-1),'bof');
     I=permute(reshape(fread(fid,metadata.dimx_p*metadata.dimy_p,'short'),[metadata.dimx_p,metadata.dimy_p]),[2,1]);
-    image(:,:,slice-first_slice+1)=I(window(1):window(2),window(3):window(4));
+    image(:,:,slice-first_slice+1)=I;
 end
 
+% image fully read at this point, so we can close it
+fclose(fid);
 
-% imageMin = min(image(:)); % or imageMin = min(min(image));
-% imageMax = max(image(:)); % or imageMax = max(max(image));
-% image = uint8(255 * ((image - imageMin) / (imageMax - imageMin)));
-
-% convert to grayscale that's usable
-image = uint8(image(:,:,:)/max(image(:))*255);
-
-
-
-
-if progress
-    close(wb);
-end
+imageMin = min(image(:)); % or imageMin = min(min(image));
+imageMax = max(image(:)); % or imageMax = max(max(image));
+% Normalise the image data 
+image = uint8(255 * ((image - imageMin) / (imageMax - imageMin)));

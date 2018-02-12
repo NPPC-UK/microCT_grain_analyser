@@ -1,4 +1,4 @@
-function [W] = watershedSplit3D(A)
+function [W] = watershedSplit3DTestMode(A)
 % Takes image stack A and splits it into stack W
 
 % Convert to BW

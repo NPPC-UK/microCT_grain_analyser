@@ -19,6 +19,8 @@
 #+LaTeX_HEADER: \rfoot{\thepage\ of \pageref{LastPage}}
 #+LATEX: \clearpage
 
+* Releases
+This software works as a rolling release, adding new features and optimising and as such please refer to [[https://github.com/NPPC-UK/microCT_grain_analyser/releases][releases]] for the latest stable version.
 
 * Usage
 Usage of this software is straightforward. Inputting a directory, a voxel size and a minimum size of expected grain objects will output and write grain statistics and image to file.
@@ -28,6 +30,7 @@ A brief setup of environment variables are required, this is an example:
 #+begin_src octave
 voxelSize = 68.8; % or whatever micro-meter to voxel ratio was used in scanning
 minimumGrainSize = 10000; % a minimum grain size of interest
+structEleSize = 5; % a size of structuring element to use for morphological operations
 
 % Every folder in CT-Scans folder and every ISQ file in them
 directory = '/home/files/CT-Scans/*/*.ISQ'; 
@@ -37,7 +40,7 @@ directory = '/home/files/CT-Scans/*/*.ISQ';
 Running the program is as simple as calling the processDirectory function.
 #+begin_src octave
 % Will process all files found by rdir function
-processDirectory(directory, voxelSize, minimumGrainSize);
+processDirectory(directory, structEleSize, voxelSize, minimumGrainSize);
 #+end_src 
 
 * Files and Functions
@@ -52,8 +55,11 @@ filterSmallObjects attempts to remove all objects which are smaller than the spe
 imSurface is a library originally by David Legland. It measures the surface area in pixels of a 3D object. 
 ** processDirectory
 processDirectory is the main controlling function of this software, it moves image data around from function to function, gathers image results/measurements and saves it to disk from here.
-** rdir
-rdir is a function which recursively finds files, it is used to find files in sub-directories by using the '*' wildcard in the directory name parameter. 
+** subdir
+subdir is a function which recursively finds files, it is used to find files in sub-directories by using the '*' wildcard in the directory name parameter. 
+
+- This function was redone as the previous 'rdir' has operating issues with certain versions of windows. 
+
 ** readISQ
 readISQ originally developed by Johan Karlsson, we have modified it to make speed increases and added specific slice loading, this helps for increased speed when processing larger images
 ** segmentRachis
