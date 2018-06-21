@@ -1,4 +1,4 @@
-function [ grain_stats, rawstats ] = countGrain( img, imagename, immask , conv, minGrainSize)
+function [ grain_stats, rawstats ] = countGrain( img, imagename , conv, minGrainSize)
 % countGrain takes an image, name,masked image conv size and minimum grain size, returns grain stats
 % grain_stats gives metric measurements and rawstats pixel value measurements
 
@@ -25,7 +25,6 @@ rawstats.None = 0;
 for grain=1:size(idx,2)
     
     single_grain = ismember(l, idx(grain));
-    
     % add removed content
     for s=1:size(single_grain, 3)
         single_grain(:,:,s) = imdilate(single_grain(:,:,s), se);
@@ -33,53 +32,38 @@ for grain=1:size(idx,2)
     end
     
     
-    b = 1;
-    t = size(single_grain, 3);
-    
-    % find bottom
-    for slice=1:size(single_grain,3)
-        if sum(sum(single_grain(:,:,slice))) == 0
-            b = slice;
-        else
-            break
-        end
-    end
-    
-    % find top
-    for slice=1:size(single_grain,3)
-        reverse_idx = size(single_grain, 3) - slice;
-        if sum(sum(single_grain(:,:,reverse_idx))) == 0
-            t = reverse_idx;
-        else
-            break
-        end
-    end
-    
-    single_grain = single_grain(:,:,b:t);
-    masked_grain = immask(:,:,b:t);
-    
+    masked_grain=img;
     for p=1:size(single_grain, 3) 
        masked_grain(:,:,p) = bsxfun(@times, masked_grain(:,:,p), cast(single_grain(:,:,p), 'like', masked_grain(:,:,p)));
     end
-    
 
+    try
+        single_grain = compact3DImage(masked_grain);
+        
+    catch e
+                   fprintf(1,'The identifier was:\n%s',e.identifier);
+           fprintf(1,'There was an error! The message was:\n%s',e.message);
+    end
     
-    %masked_grain(:,:,c) = bsxfun(@times, masked_grain(:,:,c), cast(single_grain(:,:,c), 'like', masked_grain(:,:,c)));
-
+    [single_grain, T, B] = rotateGrain(single_grain);
+    
+    b = 1;
     
     if grain == 1 
         try
         mkdir(strcat(imagename, '-grain-stacks/'));
-        [grain_stats, c, Im, rawstats] = extract_features(single_grain, b, imagename, grain);
-        catch 
-            sprintf('Whoops'); 
-            continue
+        [grain_stats, c, Im, rawstats] = extract_features(single_grain, b, imagename, grain, T, B);
+        catch e
+           fprintf(1,'The identifier was:\n%s',e.identifier);
+           fprintf(1,'There was an error! The message was:\n%s',e.message);
         end
     else
-        try
-        [grain_stats(end+1), c, Im, rawstats(end+1)] = extract_features(single_grain, b, imagename, grain);
-        catch
-           sprintf('Whoops');
+        try        
+            [grain_stats(end+1), c, Im, rawstats(end+1)] = extract_features(single_grain, b, imagename, grain, T, B);
+        catch e
+           fprintf('Whoops on after first\n');
+           fprintf(1,'The identifier was:\n%s',e.identifier);
+           fprintf(1,'There was an error! The message was:\n%s',e.message);
            continue
         end 
     end
@@ -93,21 +77,20 @@ for grain=1:size(idx,2)
     savename = strcat(dirname, 'grain-', num2str(grain), '-slice-', num2str(c) ,'.png');
     savenameGray = strcat(dirname, 'grain-', num2str(grain), '-slice-', num2str(c) ,'-gray.png');
     
-    %imwrite(Im, savename);
-    imwrite(masked_grain(:,:,c), savenameGray);
+    imwrite(single_grain(:,:,c), savenameGray);
     
     file_output_img = strcat(imagename, '-grain-stacks/', 'stack-grain-', num2str(grain), '.tif');
-    writeTif(masked_grain, file_output_img); 
+    writeTif(single_grain, file_output_img); 
     
     
 end
 
 
-    function [stats, c, Im, rawstats] = extract_features(A, b, imagename, grainNum)
+    function [stats, c, Im, rawstats] = extract_features(A, b, imagename, grainNum, T, B)
                 
+        A = logical(A);
         stats.length = (size(A, 3) * conv) / 1000;
         rawstats.length = (size(A,3));
-        
         c = floor(size(A, 3) / 2);
         Im = imfill(A(:, :, c), 'holes');
         st = regionprops(Im, 'all');
@@ -125,7 +108,6 @@ end
         end
         
 
-  
         stats.width = (st.MajorAxisLength * conv) / 1000;
         stats.depth = st.MinorAxisLength * conv / 1000;
         stats.ratio = stats.length / stats.width;
@@ -161,6 +143,8 @@ end
         stats.x = centroid(1);
         stats.y = centroid(2);
         stats.z = centroid(3) + b; 
+        stats.grainT = T;
+        stats.grainB = B;
         
     end
 

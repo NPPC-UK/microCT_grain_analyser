@@ -12,10 +12,10 @@ bw = imerode(bw, se);
 bw = imdilate(bw, se);
 
 % Fill in any left over holes
-bw = imfill(bw, 'holes');
+bw = imfill(bw,4,'holes');
 
 % Use chessboard for distance calculation for more refined splitting
-chessboard = -bwdist(~bw, 'chessboard');
+chessboard = -bwdist(~bw, 'quasi-euclidean');
 
 % Modify the intensity of our bwdist to produce chessboard2
 mask = imextendedmin(chessboard, 2);
