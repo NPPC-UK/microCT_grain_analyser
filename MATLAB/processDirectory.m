@@ -6,11 +6,12 @@ function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
 warning('off', 'MATLAB:DELETE:FileNotFound');
 warning('off', 'MATLAB:MKDIR:DirectoryExists');
 
+
 % grab all the files to process
 files = subdir(dirpath);
 for file=1:size(files, 1)
    
-    try
+    
         filename = files(file).name;
 
         fprintf('Currently on file: %s\nThis is file %d of %d\n', filename, file, size(files,1));
@@ -29,7 +30,7 @@ for file=1:size(files, 1)
         writetable(struct2table(rstats), file_output_rstats);
         
         % perform grain measurement gathering!
-        [stats, rawstats] = countGrain(bw, filename, gray, voxelSize, minGrainSize);
+        [stats, rawstats] = countGrain(gray, filename, voxelSize, minGrainSize);
 
         % write stats file
         file_output_stats = strcat(filename, '.csv');
@@ -48,6 +49,6 @@ for file=1:size(files, 1)
         file_output_gray = strcat(filename, 'gray-segmented.tif');
         writeTif(gray, file_output_gray);
 
-    end    
+        
 end
 end

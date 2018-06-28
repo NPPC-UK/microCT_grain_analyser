@@ -29,7 +29,7 @@ se = strel('disk', seSize); % changed from 5
 [pixelCounts, grayLevels] = imhist(img(:));
 cdf = cumsum(pixelCounts) / sum(pixelCounts);
 % for the prims lets let through a little more just initally 
-thresholdIndex = find(cdf < 0.88, 1, 'last'); 
+thresholdIndex = find(cdf < 0.92, 1, 'last'); 
 thresholdValue = grayLevels(thresholdIndex);
 
 if ~isempty(which('ginfo'))

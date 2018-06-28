@@ -17,11 +17,11 @@
 
 %Setup parms
 
-directory = '/home/phenomics/Primitives/*.ISQ*';
+directory = '/home/nah31/Primitives/*.ISQ*';
 
 structEleSize = 5; % Changed this, switched on WS and rerunning
 voxelSize = 68.8;
-minSize = 1000; 
+minSize = 4000; % This needs to be so low to keep in the internodes 
 
 tic % start timer
 % Process the file directory! 
