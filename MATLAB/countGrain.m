@@ -45,7 +45,9 @@ for grain=1:size(idx,2)
            fprintf(1,'There was an error! The message was:\n%s',e.message);
     end
     
-    [single_grain, T, B] = rotateGrain(single_grain);
+    %[single_grain, T, B] = rotateGrain(single_grain);
+    T = 1;
+    B = 1;
     
     b = 1;
     
