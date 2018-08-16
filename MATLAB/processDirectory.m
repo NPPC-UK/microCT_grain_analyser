@@ -1,4 +1,4 @@
-function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
+function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize, startFrom)
 % given a directory will scan for ISQ files and process
 % e.g.'dirpath/*/*.ISQ'
 
@@ -7,9 +7,13 @@ warning('off', 'MATLAB:DELETE:FileNotFound');
 warning('off', 'MATLAB:MKDIR:DirectoryExists');
 
 
+if nargin < 5
+    startFrom = 1;
+end
+
 % grab all the files to process
 files = subdir(dirpath);
-for file=1:size(files, 1)
+for file=startFrom:size(files, 1)
    
     
         filename = files(file).name;

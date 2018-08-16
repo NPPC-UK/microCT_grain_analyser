@@ -86,7 +86,6 @@ watershed3D incorporates traditional watershedding techniques and has adapted th
 ** writeTif
 writeTif writes image stacks to disk as TIF formatted files.
 
-
 * Output
 From successful running of this software output will be:
 - A statistics of grains CSV with metric values

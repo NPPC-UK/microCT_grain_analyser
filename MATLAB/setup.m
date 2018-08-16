@@ -17,13 +17,18 @@
 
 %Setup parms
 
-directory = '/home/phenomics/CT-Scans/00000094/*.ISQ';
+
+
+directory = '/home/phenomics/CT-Scans/00000048_Additional/*.ISQ';
+
+fixNames(directory);
 
 structEleSize = 5; % Changed this, switched on WS and rerunning
 voxelSize = 68.8;
-minSize = 4000; % This needs to be so low to keep in the internodes
+minSize = 300; % This needs to be so low to keep in the internodes
 
 tic % start timer
 % Process the file directory!
-processDirectory(directory, structEleSize, voxelSize, minSize);
+processDirectory(directory, structEleSize, voxelSize, minSize, 1);
 toc % get run time
+
