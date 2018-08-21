@@ -18,24 +18,22 @@
 %Setup parms
 
 
-directory = '/home/user/scan_directory/*ISQ';
 
-fixNames(directory); % this will fix names of the bad files (see readme)
+directory = '/home/phenomics/CT-Scans/00000048_Additional_2/*.ISQ';
 
-structEleSize = 7;
+fixNames(directory);
+
+structEleSize = 7; % Changed this, switched on WS and rerunning
 voxelSize = 68.8;
 minSize = 300; % This needs to be so low to keep in the internodes
 
 
-% More optional parameters which change type of scanning
 startFrom = 1;
 endAt = 0;
 watershed = true;
 
 
 tic % start timer
-
 % Process the file directory!
 processDirectory(directory, structEleSize, voxelSize, minSize, watershed, startFrom, endAt);
-
 toc % get run time

@@ -49,10 +49,14 @@ watershed = true;
 - =endAt= is where the process will stop, useful for if you'd only like to use a few scans for testing. Default is 0 and this will process everything
 - =watershed= will be a boolean value which will toggle if the more robust and strict watersheding is triggered - this will make processing take a lot longer and at times may over-segment. Generally only use if scans are failing to separate properly, or are particularly small (i.e. wild types / barley)
 
+
+#+end_src
+
 *** N.B.
 
 Scanco has been known to alter the filenames for a reason known only Minerva would know.
 So be on the lookout for:
+
 #+BEGIN_SRC bash :exports code
 C0000123.ISQ;1
 #+END_SRC
@@ -62,7 +66,6 @@ To get around this I recommend running a script something like this (or a sed eq
 #+BEGIN_SRC python :exports code
   from glob import glob
   from os import rename
-
   [rename(f, f.replace(';','')) for f in glob('*.ISQ;1')]
 #+END_SRC
 
@@ -96,7 +99,6 @@ segmentRachis finds locations of nodes along the rachis of spikes of wheat, oats
 watershed3D incorporates traditional watershedding techniques and has adapted them to work in 3D. It also makes use of modernised distance-based watershed methods, by way of chessboard distance technique.
 ** writeTif
 writeTif writes image stacks to disk as TIF formatted files.
-
 
 * Output
 From successful running of this software output will be:
