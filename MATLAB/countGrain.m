@@ -41,11 +41,13 @@ for grain=1:size(idx,2)
         single_grain = compact3DImage(masked_grain);
         
     catch e
-                   fprintf(1,'The identifier was:\n%s',e.identifier);
+           fprintf(1,'The identifier was:\n%s',e.identifier);
            fprintf(1,'There was an error! The message was:\n%s',e.message);
     end
     
-    [single_grain, T, B] = rotateGrain(single_grain);
+    %[single_grain, T, B] = rotateGrain(single_grain);
+    T = 1;
+    B = 1;
     
     b = 1;
     
@@ -72,6 +74,7 @@ for grain=1:size(idx,2)
     
     % write single pictures of grain
     %imshow(Im);
+    try
     dirname = strcat(imagename, '-grains/');
     mkdir(dirname);
     savename = strcat(dirname, 'grain-', num2str(grain), '-slice-', num2str(c) ,'.png');
@@ -81,7 +84,10 @@ for grain=1:size(idx,2)
     
     file_output_img = strcat(imagename, '-grain-stacks/', 'stack-grain-', num2str(grain), '.tif');
     writeTif(single_grain, file_output_img); 
-    
+    catch e 
+        fprintf(1, 'Error: \n%s', e.identifier); 
+        continue
+    end 
     
 end
 

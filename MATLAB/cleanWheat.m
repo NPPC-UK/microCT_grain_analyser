@@ -1,4 +1,4 @@
-function [bw,gray, r, rtop, rbottom] = cleanWheat( filename, seSize, minSize )
+function [bw,gray, r, rtop, rbottom] = cleanWheat( filename, seSize, minSize, watershed )
 % cleanWheat takes the filename of raw ISQ image, returns segmented image
 % returns both a black and white image and a masked greyscale image
 
@@ -61,7 +61,9 @@ end
 [r, rtop, rbottom] = segmentRachis(img);
 
 % Split up image as needed 
-bw = watershedSplit3D(bw); 
+if watershed 
+    bw = watershedSplit3D(bw);
+end
 
 % Filter out any left over objects which haven't been split
 [bw, gray] = filterSmallObjs(bw, gray, minSize); 

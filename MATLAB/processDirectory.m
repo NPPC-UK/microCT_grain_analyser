@@ -1,4 +1,4 @@
-function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
+function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize, watershed, startFrom, endAt)
 % given a directory will scan for ISQ files and process
 % e.g.'dirpath/*/*.ISQ'
 
@@ -6,10 +6,22 @@ function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize)
 warning('off', 'MATLAB:DELETE:FileNotFound');
 warning('off', 'MATLAB:MKDIR:DirectoryExists');
 
-
 % grab all the files to process
 files = subdir(dirpath);
-for file=1:size(files, 1)
+
+
+
+if nargin < 7
+    endAt = size(files, 1);  
+    if nargin < 6
+        startFrom = 1;  
+    end
+elseif endAt == 0
+    endAt = size(files,1);
+end
+
+
+for file=startFrom:endAt
    
     
         filename = files(file).name;
@@ -17,7 +29,7 @@ for file=1:size(files, 1)
         fprintf('Currently on file: %s\nThis is file %d of %d\n', filename, file, size(files,1));
 
         % segment image initially in 2D  
-        [bw, gray, r, rtop, rbot] = cleanWheat(filename, structuringEleSize, minGrainSize);
+        [bw, gray, r, rtop, rbot] = cleanWheat(filename, structuringEleSize, minGrainSize, watershed);
 
 	% Write rachis information and file
 	file_output_rachis = strcat(filename, '-rachis.tif');
