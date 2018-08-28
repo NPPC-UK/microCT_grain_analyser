@@ -19,7 +19,7 @@
 
 
 
-directory = '/home/phenomics/CT-Scans/00000048_Additional_2/*.ISQ';
+directory = '/home/phenomics/CT-Scans/00000094/*.ISQ';
 
 fixNames(directory);
 
@@ -30,7 +30,7 @@ minSize = 300; % This needs to be so low to keep in the internodes
 
 startFrom = 1;
 endAt = 0;
-watershed = true;
+watershed = false;
 
 
 tic % start timer

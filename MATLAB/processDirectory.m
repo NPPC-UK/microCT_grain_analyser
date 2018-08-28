@@ -5,6 +5,8 @@ function processDirectory(dirpath, structuringEleSize, voxelSize, minGrainSize, 
 % Disable file overwrite warnings so we can see output
 warning('off', 'MATLAB:DELETE:FileNotFound');
 warning('off', 'MATLAB:MKDIR:DirectoryExists');
+warning('off');
+
 
 % grab all the files to process
 files = subdir(dirpath);
