@@ -111,11 +111,17 @@ end
         C = st.ConvexImage - st.Image;
         
         vst = regionprops(im2bw(C, 0), 'MinorAxisLength');
-        
-        mal = sort([vst.MinorAxisLength], 'descend');
-        
-        stats.crease_depth = (mal(1) * conv) / 1000;
-        rawstats.crease_depth = mal(1); 
+
+        % Found crease, calculate depth, set to illegal value otherwise
+        if ~isempty(vst)
+          mal = sort([vst.MinorAxisLength], 'descend');
+
+          stats.crease_depth = (mal(1) * conv) / 1000;
+          rawstats.crease_depth = mal(1);
+        else
+          stats.crease_depth = -1;
+          rawstats.crease_depth = -1;
+        end
         
         stats.surface_area = (imSurface(A) * (conv^2)) / 1000^2;
         rawstats.surface_area = imSurface(A); 
