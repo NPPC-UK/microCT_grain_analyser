@@ -61,8 +61,11 @@ for grain=1:size(idx,2)
     
     file_output_img = strcat(imagename, '-grain-stacks/', 'stack-grain-', num2str(grain), '.tif');
     writeTif(masked_grain, file_output_img); 
-    catch
-        fprintf('\nProblem with a grain\n');
+    catch ME
+	
+        fprintf('Problem with a grain: \n');
+        fprintf(ME.getReport, '\n');
+
     end
 end
 
