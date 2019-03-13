@@ -7,8 +7,8 @@ function [len, bottom, top] = calcLength(bw)
   bottom_idx = min(height);
   top_idx = max(height);
 
-  bottom_slice = bw(:, :, bottom_idx);
-  top_slice = bw(:, :, top_idx);
+  bottom_slice = uint8(bw(:, :, bottom_idx));
+  top_slice = uint8(bw(:, :, top_idx));
 
   p_bottom = regionprops(bottom_slice, 'Centroid');
   p_top = regionprops(top_slice, 'Centroid');
