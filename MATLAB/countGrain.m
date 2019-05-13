@@ -135,6 +135,10 @@ end
         stats.x = centroid(1);
         stats.y = centroid(2);
         stats.z = centroid(3); 
+        raw_stats.x = stats.x;
+        raw_stats.y = stats.y;
+        raw_stats.z = stats.z; 
+
         stats.grainT = T;
         stats.grainB = B;
         c = floor(centroid(3));
