@@ -33,7 +33,7 @@ for file=startFrom:endAt
         % segment image initially in 2D  
         [bw, gray, r, rtop, rbot] = cleanWheat(filename, structuringEleSize, minGrainSize, watershed);
 
-        [bw_obj, gray_obj] = cleanObject(filename);
+        [bw_obj, gray_obj] = cleanObject(filename, structuringEleSize);
 
         % get length of object and write immediately in case of crash
         [len, bottom, top] = calcLength(bw);

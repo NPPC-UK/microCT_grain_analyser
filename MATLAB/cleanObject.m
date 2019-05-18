@@ -1,4 +1,4 @@
-function [bw,gray] = cleanObject( filename )
+function [bw,gray] = cleanObject( filename, seSize )
 % cleanWheat takes the filename of raw ISQ image, returns segmented image
 % returns both a black and white image and a masked greyscale image
 
@@ -21,6 +21,9 @@ mask = extractBiggestBlob(im2bw(img(:,:,middle_slice), graythresh(img(:,:,middle
 % tube moves slightly during scanning, dilating makes it consistantly
 % removable 
 mask = imdilate(mask, strel('disk', 15));
+
+% structuring element 
+se = strel('disk', seSize); % changed from 5
 
 % Set thresholding value
 thresholdValue = 1000;
