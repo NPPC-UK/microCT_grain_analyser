@@ -26,7 +26,7 @@ mask = imdilate(mask, strel('disk', 15));
 se = strel('disk', seSize); % changed from 5
 
 % Set thresholding value
-thresholdValue = 22;
+thresholdValue = 30;
 
 if ~isempty(which('ginfo'))
    img = gpuArray(img);  
