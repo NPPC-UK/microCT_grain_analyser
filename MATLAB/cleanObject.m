@@ -53,7 +53,3 @@ end
 gray = gray(bw == 1);
 
 end
-
-
-
-end
