@@ -33,6 +33,8 @@ for file=startFrom:endAt
         % segment image initially in 2D  
         [bw, gray, r, rtop, rbot] = cleanWheat(filename, structuringEleSize, minGrainSize, watershed);
 
+        [bw_obj, gray_obj] = cleanObject(filename);
+
         % get length of object and write immediately in case of crash
         [len, bottom, top] = calcLength(bw);
         file_output_length = strcat(filename, 'length.csv');
@@ -67,6 +69,12 @@ for file=startFrom:endAt
 
         file_output_gray = strcat(filename, 'gray-segmented.tif');
         writeTif(gray, file_output_gray);
+
+        file_output_bw_obj = strcat(filename, 'bw_obj-segmented.tif');
+        writeTif(bw_obj, file_output_bw_obj);
+
+        file_output_gray_obj = strcat(filename, 'gray_obj-segmented.tif');
+        writeTif(gray_obj, file_output_gray_obj);
 
 
 end
