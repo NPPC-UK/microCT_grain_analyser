@@ -40,7 +40,7 @@ for slice = 1:size(img, 3)
     [~, threshold] = edge(I, 'sobel');
     fudgeFactor = 0.5;
     edges = edge(I, 'sobel', threshold * fudgeFactor);
-    I = I - mask;
+    I = edges - mask;
     I = convhull(I)
     img(:,:,slice) = I;
     
