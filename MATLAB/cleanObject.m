@@ -41,6 +41,7 @@ for slice = 1:size(img, 3)
     fudgeFactor = 1;
     edges = edge(I, 'sobel', threshold * fudgeFactor);
     I = edges - mask;
+    I = I > 0;
     I = bwconvhull(I, 'objects');
     img(:,:,slice) = I;
     
