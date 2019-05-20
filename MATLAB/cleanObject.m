@@ -32,15 +32,16 @@ if ~isempty(which('ginfo'))
    img = gpuArray(img);  
 end
 
+
 % prepare each and every slice of the 3D image stack
 for slice = 1:size(img, 3)
     
-    I = img(:,:,slice) > thresholdValue;
-    tmp = imopen(I, se);  
-    tmp = medfilt2(tmp, [3,3]);
-    tmp = imclose(tmp, se); 
-    I = tmp & I;
+    I = img(:, :, slice);
+    [~, threshold] = edge(I, 'sobel');
+    fudgeFactor = 0.5;
+    edges = edge(I, 'sobel', threshould * fudgeFactor);
     I = I - mask;
+    I = convhull(I)
     img(:,:,slice) = I;
     
 end
@@ -52,8 +53,5 @@ if ~isempty(which('ginfo'))
 else
     bw = logical(img);
 end
-
-% Filter out any left over objects which haven't been split
-[bw, gray] = filterSmallObjs(bw, gray, 1000);
 
 end
