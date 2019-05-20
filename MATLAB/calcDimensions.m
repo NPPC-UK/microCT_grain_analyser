@@ -2,7 +2,6 @@ function dims = calcDimensionsn(bw)
   % calcLenght takes a blakc and white image and calculates the length 
   % of the object
   dims = [];
-  dims.None = 0;
 
   [row, column, height] = ind2sub(size(bw), find(bw));
 
@@ -16,7 +15,7 @@ function dims = calcDimensionsn(bw)
         
     s = bw(:, :, sl);
     props = regionprops(s, 'Centroid', 'MajorAxisLength', 'MinorAxisLength');
-    if dims.None == 0
+    if size(dims) == 0
 	    dims = struct(...
 	      'x', props.Centroid(1),...
 	      'y', props.Centroid(2),...
