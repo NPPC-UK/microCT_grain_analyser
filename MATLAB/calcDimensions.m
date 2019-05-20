@@ -8,7 +8,7 @@ function dims = calcDimensionsn(bw)
   top_idx = max(height);
 
   N = (top_idx - bottom_idx) + 1;
-  dims(N) = struct('x', [], 'y', [], 'z', [], 'major', [], 'minor', [])
+  dims(N) = struct('x', [], 'y', [], 'z', [], 'major', [], 'minor', []);
 
   bottom_slice = uint8(bw(:, :, bottom_idx));
   top_slice = uint8(bw(:, :, top_idx));
@@ -25,12 +25,6 @@ function dims = calcDimensionsn(bw)
           'z', sl,...
           'major', props.MajorAxisLength,...
           'minor', props.MinorAxisLength);
-
-    try
-        dims((sl - bottom_idx) + 1) = dim;
-    catch ME
-	dims
-	dim
     end
   end
 end
