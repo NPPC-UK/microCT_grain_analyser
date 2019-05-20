@@ -43,8 +43,14 @@ for slice = 1:size(img, 3)
     I = edges - mask;
     I = I > 0;
     I = bwconvhull(I, 'objects');
+
+    % Morph open to remove small noise
+    tmp = imopen(I, se);
+    I = tmp & I;
+
+    %global conv hull to recover the pod
+    I = bwconvhull(I);
     img(:,:,slice) = I;
-    
 end
 
 
