@@ -61,6 +61,6 @@ else
     bw = logical(img);
 end
 
-gray = gray.*bw;
+gray = uint8(gray).*uint8(bw);
 
 end
