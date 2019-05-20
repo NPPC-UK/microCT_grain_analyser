@@ -55,4 +55,7 @@ end
 
 gray = gray(bw == 1);
 
+% Filter out any left over objects which haven't been split
+[bw, gray] = filterSmallObjs(bw, gray, minSize);
+
 end
