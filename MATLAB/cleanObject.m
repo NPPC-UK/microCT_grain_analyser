@@ -38,14 +38,16 @@ for slice = 1:size(img, 3)
     
     I = img(:, :, slice);
     [~, threshold] = edge(I, 'sobel');
-    fudgeFactor = 1;
+    fudgeFactor = 0.95;
     edges = edge(I, 'sobel', threshold * fudgeFactor);
     I = edges - mask;
     I = I > 0;
     I = bwconvhull(I, 'objects');
 
+    % Morph close to prevent under segmentation
+    tmp = imclose(I, se);
     % Morph open to remove small noise
-    tmp = imopen(I, se);
+    tmp = imopen(tmp, se);
     I = tmp & I;
 
     %global conv hull to recover the pod
