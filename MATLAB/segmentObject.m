@@ -1,4 +1,4 @@
-function [bw,gray] = cleanObject( filename, seSize )
+function [bw,gray] = segmentObject( filename, seSize )
 % cleanWheat takes the filename of raw ISQ image, returns segmented image
 % returns both a black and white image and a masked greyscale image
 

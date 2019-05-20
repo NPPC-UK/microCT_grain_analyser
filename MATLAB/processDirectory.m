@@ -33,12 +33,12 @@ for file=startFrom:endAt
         % segment image initially in 2D  
         [bw, gray, r, rtop, rbot] = cleanWheat(filename, structuringEleSize, minGrainSize, watershed);
 
-        [bw_obj, gray_obj] = cleanObject(filename, structuringEleSize);
+        [bw_obj, gray_obj] = segmentObject(filename, structuringEleSize);
 
         % get length of object and write immediately in case of crash
-        [len, bottom, top] = calcLength(bw);
-        file_output_length = strcat(filename, 'length.csv');
-        csvwrite(file_output_length, [len, bottom, top]);
+        dims = calcDimensions(bw_obj);
+        file_output_dims = strcat(filename, 'dims.csv');
+        writetable(struct2table(dims), file_output_dims);
 
 	% Write rachis information and file
 	file_output_rachis = strcat(filename, '-rachis.tif');
