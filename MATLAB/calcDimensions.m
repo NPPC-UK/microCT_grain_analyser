@@ -1,7 +1,7 @@
 function dims = calcDimensionsn(bw)
   % calcLenght takes a blakc and white image and calculates the length 
   % of the object
-  dims = []
+  dims = [];
   dims.None = 0;
 
   [row, column, height] = ind2sub(size(bw), find(bw));
