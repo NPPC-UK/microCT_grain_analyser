@@ -61,4 +61,6 @@ else
     bw = logical(img);
 end
 
+gray = gray.*bw;
+
 end
