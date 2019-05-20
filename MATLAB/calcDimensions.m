@@ -15,6 +15,9 @@ function dims = calcDimensionsn(bw)
 
   for sl = bottom_idx:top_idx
     s = bw(:, :, sl);
+    if all(s(:) == 0)
+        continue
+    end
     props = regionprops(s, 'Centroid', 'MajorAxisLength', 'MinorAxisLength');
     dim = struct(...
           'x', props.Centroid(1),...
