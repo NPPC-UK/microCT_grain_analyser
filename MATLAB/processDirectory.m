@@ -85,8 +85,8 @@ for file=startFrom:endAt
         writeTif(gray_obj, file_output_gray_obj);
 	clear gray_obj file_output_gray_obj;
 
-	if count > 20
+	if f_count > 20
 		pack;
-		count = 0;
+		f_count = 0;
 end
 end
