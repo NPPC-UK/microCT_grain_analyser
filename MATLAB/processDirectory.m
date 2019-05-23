@@ -22,7 +22,7 @@ elseif endAt == 0
     endAt = size(files,1);
 end
 
-
+f_count = 0;
 for file=startFrom:endAt
    
     
@@ -85,6 +85,8 @@ for file=startFrom:endAt
         writeTif(gray_obj, file_output_gray_obj);
 	clear gray_obj file_output_gray_obj;
 
-
+	if count > 20
+		pack;
+		count = 0;
 end
 end
