@@ -88,5 +88,7 @@ for file=startFrom:endAt
 	if f_count > 20
 		pack;
 		f_count = 0;
+	end
+	f_count = f_count + 1;
 end
 end
