@@ -25,5 +25,6 @@ function dims = calcDimensionsn(bw)
           'z', sl,...
           'major', props.MajorAxisLength,...
           'minor', props.MinorAxisLength);
+    dims(end+1) = dim;
   end
 end
