@@ -1,7 +1,8 @@
-#!/bin/sh
-chunk=60
-n_images=1266
+#!/bin/bash
+let chunk=60
+let n_images=1266
 let uper_lim=$n_images+1
+let current=1
 
 dir="/mnt/mass/scratch/scratch/br09_data/*.ISQ"
 voxs="68.8"
