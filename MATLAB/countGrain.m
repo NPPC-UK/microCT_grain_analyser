@@ -135,9 +135,9 @@ end
         stats.x = centroid(1);
         stats.y = centroid(2);
         stats.z = centroid(3); 
-        raw_stats.x = stats.x;
-        raw_stats.y = stats.y;
-        raw_stats.z = stats.z; 
+        rawstats.x = stats.x;
+        rawstats.y = stats.y;
+        rawstats.z = stats.z; 
 
         stats.grainT = T;
         stats.grainB = B;
